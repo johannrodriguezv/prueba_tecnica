@@ -1,0 +1,88 @@
+{
+  "realm": "orders",
+  "enabled": true,
+  "sslRequired": "none",
+  "registrationAllowed": false,
+  "accessTokenLifespan": 300,
+  "ssoSessionIdleTimeout": 1800,
+  "roles": {
+    "realm": [
+      { "name": "customer", "description": "Crea, consulta y cancela sus propios pedidos" },
+      { "name": "admin", "description": "Despacha pedidos" }
+    ]
+  },
+  "clients": [
+    {
+      "clientId": "bff",
+      "name": "BFF (resource server)",
+      "description": "Audiencia que el BFF valida en el claim aud",
+      "enabled": true,
+      "publicClient": false,
+      "bearerOnly": false,
+      "standardFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "secret": "bff-secret-only-for-tests"
+    },
+    {
+      "clientId": "frontend",
+      "name": "Frontend y pruebas con curl/Postman",
+      "enabled": true,
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": true,
+      "redirectUris": ["http://localhost:*"],
+      "webOrigins": ["+"],
+      "attributes": {
+        "pkce.code.challenge.method": "S256"
+      },
+      "defaultClientScopes": ["basic", "profile", "email", "roles", "web-origins", "acr"],
+      "protocolMappers": [
+        {
+          "name": "audience-bff",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.client.audience": "bff",
+            "access.token.claim": "true",
+            "id.token.claim": "false",
+            "introspection.token.claim": "true"
+          }
+        }
+      ]
+    }
+  ],
+  "users": [
+    {
+      "username": "customer1",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Customer",
+      "lastName": "One",
+      "email": "customer1@example.test",
+      "credentials": [{ "type": "password", "value": "Test.1234", "temporary": false }],
+      "realmRoles": ["customer"]
+    },
+    {
+      "username": "customer2",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Customer",
+      "lastName": "Two",
+      "email": "customer2@example.test",
+      "credentials": [{ "type": "password", "value": "Test.1234", "temporary": false }],
+      "realmRoles": ["customer"]
+    },
+    {
+      "username": "admin1",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Admin",
+      "lastName": "One",
+      "email": "admin1@example.test",
+      "credentials": [{ "type": "password", "value": "Test.1234", "temporary": false }],
+      "realmRoles": ["admin"]
+    }
+  ]
+}
